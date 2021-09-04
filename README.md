@@ -41,7 +41,7 @@ $ docker run -itd --name SE-SSD --gpus all --ipc host \
     -v <host-shared-path>:/shared_area loaywael/se_ssd:ros-kinetic-ub16
 $ docker exec -it SE-SSD bash
 ```
-##### [on-local]
+##### [on-guest]
 make sure of setting the ros-network between the container and the host
 ```bash
 $ ifconfig
@@ -61,11 +61,11 @@ $ python <script-name>
 ```
 <br>
 
-### [supports]:
+### [supports]
 - model inference given a directory of PointCloud binaries.
 - integrated with ROS
 - supports custom datasets
 
-### [to-do]:
+### [to-do]
 - support multi-class prediction
 - support 360 degree detection
