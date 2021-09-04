@@ -1,4 +1,6 @@
 <<<<<<< HEAD
+
+assets/*.pth
 # untrack package rebo dependencies
 __pycache__/
 =======
