@@ -1,6 +1,8 @@
 <launch>
 
     <arg name="arl" default="false"/>
+    <arg name="kitti" default="false"/>
+    <arg name="nuscenes" default="false"/>
 
     <param name='boxes3d_queue_size' type='int' value='10'/>
     <param name='markers_queue_size' type='int' value='100'/>
@@ -9,16 +11,20 @@
     <param name='rviz_pointcloud_topic' type='str' value='/perception/rviz/raw/pointcloud'/>
     <param name='rviz_boxes_marker_topic' type='str' value='/perception/rviz/markers/cubes'/>
     
-    
     <group if="$(arg arl)">
         <param name='lidar_frame' type='str' value='velodyne'/>
         <param name='pointcloud_topic' type='str' value='/velodyne_points'/>
         <node pkg="se_ssd" type="ros_arl_demo.py" name="arl_3d_detector_node" output="screen"/>
     </group>
-    <group unless="$(arg arl)">
+    <group if="$(arg kitti)">
         <param name='lidar_frame' type='str' value='velo_link'/>
         <param name='pointcloud_topic' type='str' value='/kitti/velo/pointcloud'/>
         <node pkg="se_ssd" type="ros_kitti_demo.py" name="kitti_3d_detector_node" output="screen"/>
+    </group>
+    <group if="$(arg nuscenes)">
+        <param name='lidar_frame' type='str' value='lidar_top'/>
+        <param name='pointcloud_topic' type='str' value='/lidar_top'/>
+        <node pkg="se_ssd" type="ros_arl_demo.py" name="nuscenes_3d_detector_node" output="screen"/>
     </group>
 
 </launch>
