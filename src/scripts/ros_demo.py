@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
 from det3d.torchie.parallel import MegDataParallel
-from det3d.torchie.parallel import collate_kitti
-from det3d.datasets import build_dataset
-from det3d.datasets import build_dataset
-from torch.utils.data import DataLoader
 from det3d.models import build_detector
 from det3d import torchie
 from demo_utils import numpy_to_MarkerMsg
 from demo_utils import numpy_to_BBox3DMsg
 from demo_utils import infer_model
+from demo_utils import get_dataset
 from sensor_msgs.msg import PointCloud2
 from visualization_msgs.msg import MarkerArray
 from arl_msgs.msg import BBox3DArray
@@ -54,28 +51,20 @@ def pointcloud_callback(pc_msg):
         pc_struct[lidar_intensity_channel],
     ], dtype='float32').T
     if lidar_intensity_channel != "i": pc_arr[:, 3] /= pc_arr[:, 3].max()
-    dataset = build_dataset(cfg.data.test)
-    dataset.pc_arr = pc_arr
-    data_loader = DataLoader(
-        dataset,
-        batch_size=1,
-        sampler=None,
-        num_workers=8,
-        collate_fn=collate_kitti,
-        shuffle=False,
-    )
+    # -------------------------------------------------------
     tick = time.perf_counter()
-    predictions = infer_model(data_loader, model)
+    dataset = get_dataset(pc_arr, cfg.data.test)
+    output = infer_model(dataset, model)
     tock = time.perf_counter()
     model_runtime = tock - tick    # inference time in seconds
-    if predictions is not None and len(predictions) > 0:
-        bboxes3d = predictions[0]["box3d_lidar"]    # batch 1st sample batch_size=1
-        class_ids = predictions[0]["label_preds"]
-        scores = predictions[0]["scores"]
+    # -------------------------------------------------------
+    if output is not None and len(output) > 0:
+        bboxes3d = output["boxes3d"]    # batch 1st sample batch_size=1
+        class_ids = output["labels"]
+        scores = output["scores"]
         print("\n", "--- "*11)
         print(f"---> [inference-time]: \t {model_runtime*1000:0.0f} (ms)")
-        print(f"---> [sample-prediction-size]: \t {bboxes3d.size()}")
-        # print(f"---> [sample-prediction-size]: \n {predictions[0]}")
+        print(f"---> [sample-prediction-size]: \t {len(bboxes3d)}")
         markers_msg = MarkerArray()
         bboxes_msg = BBox3DArray()
         for idx in range(len(bboxes3d)):
@@ -90,16 +79,12 @@ def pointcloud_callback(pc_msg):
 
 
 if __name__ == "__main__":
-
     # init ros-node
     rospy.init_node("object_detector_3d_node")
-
     # subscribers
     pc_sub = rospy.Subscriber(pointcloud_topic, PointCloud2, pointcloud_callback)
-
     # publishers
     vis_pc_pub = rospy.Publisher(rviz_pointcloud_topic, PointCloud2, queue_size=rviz_pc_queue_size)
     bboxes_pub = rospy.Publisher(boxes3d_lidar_topic, BBox3DArray, queue_size=boxes3d_queue_size)
     marker_pub = rospy.Publisher(rviz_boxes_marker_topic, MarkerArray, queue_size=markers_queue_size)
-
     rospy.spin()

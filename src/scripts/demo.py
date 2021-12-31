@@ -2,11 +2,8 @@
 
 from det3d.torchie.parallel import MegDataParallel
 from det3d.torchie.parallel import collate_kitti
-from det3d.datasets import build_dataset
-from det3d.datasets import build_dataset
-from torch.utils.data import DataLoader
 from det3d.models import build_detector
-from demo_utils import infer_model
+from demo_utils import get_dataset, infer_model
 from det3d import torchie
 import numpy as np
 import time
@@ -15,9 +12,9 @@ import os
 
 
 # DATA_DIR = "/shared_area/kitti_data/velo_28"
-DATA_DIR = "/shared_area/arl_bag/velodyne"
-CONFIG_FILE = "/workspace/src/se_ssd/assets/config.py"
-CHECKPOINT = "/workspace/src/se_ssd/assets/se-ssd-model.pth"
+DATA_DIR = "/shared_area/datasets/velodyne"
+CONFIG_FILE = "/workspace/ros_ws/src/se_ssd/assets/config.py"
+CHECKPOINT = "/workspace/ros_ws/src/se_ssd/assets/se-ssd-model.pth"
 
 cfg = torchie.Config.fromfile(CONFIG_FILE)
 # cfg.data.val.test_mode = True
@@ -38,18 +35,9 @@ model.eval()
 def infer_pc_file(pc_file):
     pc_arr = np.fromfile(pc_file, dtype="float32").reshape(-1, 4)
     pc_arr[:, 3] /= pc_arr[:, 3].max()
-    dataset = build_dataset(cfg.data.test)
-    dataset.pc_arr = pc_arr
-    data_loader = DataLoader(
-	dataset,
-	batch_size=1,
-	sampler=None,
-	num_workers=8,
-	collate_fn=collate_kitti,
-	shuffle=False,
-    )
     tick = time.perf_counter()
-    predictions = infer_model(data_loader, model)
+    dataset = get_dataset(pc_arr, cfg.data.test)
+    output = infer_model(dataset, model)
     tock = time.perf_counter()
     if predictions is not None and len(predictions) > 0:
         bboxes3d = predictions[0]["box3d_lidar"].cpu()    # batch 1st sample batch_size=1
@@ -66,3 +54,8 @@ if __name__ == "__main__":
     for idx, pc_file in enumerate(pc_names_list):
         infer_pc_file(DATA_DIR+"/"+pc_file)
         print(f"[infered] --- ({idx}/{data_size})")
+        t1 = time.perf_counter()
+        dataset = get_dataset(pc_arr, cfg.data.test)
+        output = infer_model(dataset, model)
+        t2 = time.perf_counter()
+        print(f"[runtime]: {(t2-t1)*1000:.3f}(ms)")
