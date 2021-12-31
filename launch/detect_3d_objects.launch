@@ -1,30 +1,34 @@
 <launch>
 
+    <arg name="weights_path" default=""/>
     <arg name="arl" default="false"/>
     <arg name="kitti" default="false"/>
     <arg name="nuscenes" default="false"/>
+    <arg name="cfg_path" default="$(find se_ssd)/assets/config.py"/>
 
-    <param name='boxes3d_queue_size' type='int' value='10'/>
-    <param name='markers_queue_size' type='int' value='100'/>
-    <param name='rviz_pc_queue_size' type='int' value='10'/>
+    <param name='model_config_path' type='str' value="$(arg cfg_path)"/>
+    <param name='model_weights_path' type='str' value="$(arg weights_path)"/>
     <param name='boxes3d_lidar_topic' type='str' value='/perception/lidar/bboxes3d'/>
     <param name='rviz_pointcloud_topic' type='str' value='/perception/rviz/raw/pointcloud'/>
     <param name='rviz_boxes_marker_topic' type='str' value='/perception/rviz/markers/cubes'/>
+    <param name='boxes3d_queue_size' type='int' value='10'/>
+    <param name='markers_queue_size' type='int' value='100'/>
+    <param name='rviz_pc_queue_size' type='int' value='10'/>
     
     <group if="$(arg arl)">
         <param name='lidar_frame' type='str' value='velodyne'/>
         <param name='pointcloud_topic' type='str' value='/velodyne_points'/>
-        <node pkg="se_ssd" type="ros_arl_demo.py" name="arl_3d_detector_node" output="screen"/>
     </group>
     <group if="$(arg kitti)">
         <param name='lidar_frame' type='str' value='velo_link'/>
         <param name='pointcloud_topic' type='str' value='/kitti/velo/pointcloud'/>
-        <node pkg="se_ssd" type="ros_kitti_demo.py" name="kitti_3d_detector_node" output="screen"/>
+        
     </group>
     <group if="$(arg nuscenes)">
         <param name='lidar_frame' type='str' value='lidar_top'/>
         <param name='pointcloud_topic' type='str' value='/lidar_top'/>
-        <node pkg="se_ssd" type="ros_arl_demo.py" name="nuscenes_3d_detector_node" output="screen"/>
     </group>
+
+    <node pkg="se_ssd" type="ros_demo.py" name="lidar_3dod_node" output="screen"/>
 
 </launch>

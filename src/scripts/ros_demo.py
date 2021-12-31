@@ -19,35 +19,41 @@ import rospy
 import time
 
 
+# topic names
+model_config_path = rospy.get_param("model_config_path")
+model_weights_path = rospy.get_param("model_weights_path")
+pointcloud_topic = rospy.get_param("pointcloud_topic")
+boxes3d_lidar_topic = rospy.get_param("boxes3d_lidar_topic")
+rviz_boxes_marker_topic = rospy.get_param("rviz_boxes_marker_topic")
+rviz_pointcloud_topic = rospy.get_param("rviz_pointcloud_topic")
+rviz_pc_queue_size =  rospy.get_param("rviz_pc_queue_size")
+boxes3d_queue_size = rospy.get_param("boxes3d_queue_size")
+markers_queue_size = rospy.get_param("markers_queue_size")
+lidar_frame = rospy.get_param("lidar_frame")
+lidar_intensity_channel = "intensity" if lidar_frame != "velo_link" else "i"    # if not kitti
 
-CONFIG_FILE = "/workspace/src/se_ssd/assets/config.py"
-CHECKPOINT = "/workspace/src/se_ssd/assets/se-ssd-model.pth"
 
-cfg = torchie.Config.fromfile(CONFIG_FILE)
+cfg = torchie.Config.fromfile(model_config_path)
 # cfg.data.val.test_mode = True
-
 model = build_detector(cfg.model, train_cfg=None, test_cfg=cfg.test_cfg)
-
 # checkpoint_path = os.path.join(cfg.work_dir, args.checkpoint)
-checkpoint = torchie.trainer.load_checkpoint(model, CHECKPOINT, map_location="cpu")
-# print("--------> checkpoint type: ", type(checkpoint))
-
+checkpoint = torchie.trainer.load_checkpoint(model, model_weights_path, map_location="cpu")
 if "CLASSES" in checkpoint["meta"]: model.CLASSES = checkpoint["meta"]["CLASSES"]
 else: model.CLASSES = dataset.CLASSES
 
 model = MegDataParallel(model, device_ids=[0])
 model.eval()
 
-
-def pointcloud_handler(pc_msg):
+def pointcloud_callback(pc_msg):
     global marker_pub, bboxes_pub
     pc_struct = ros_numpy.numpify(pc_msg)
     pc_arr = np.array([
         pc_struct['x'],
         pc_struct['y'],
         pc_struct['z'],
-        pc_struct['i'],
+        pc_struct[lidar_intensity_channel],
     ], dtype='float32').T
+    if lidar_intensity_channel != "i": pc_arr[:, 3] /= pc_arr[:, 3].max()
     dataset = build_dataset(cfg.data.test)
     dataset.pc_arr = pc_arr
     data_loader = DataLoader(
@@ -84,21 +90,12 @@ def pointcloud_handler(pc_msg):
 
 
 if __name__ == "__main__":
+
     # init ros-node
     rospy.init_node("object_detector_3d_node")
 
-    # topic names
-    pointcloud_topic = rospy.get_param("pointcloud_topic")
-    boxes3d_lidar_topic = rospy.get_param("boxes3d_lidar_topic")
-    rviz_boxes_marker_topic = rospy.get_param("rviz_boxes_marker_topic")
-    rviz_pointcloud_topic = rospy.get_param("rviz_pointcloud_topic")
-    rviz_pc_queue_size =  rospy.get_param("rviz_pc_queue_size")
-    boxes3d_queue_size = rospy.get_param("boxes3d_queue_size")
-    markers_queue_size = rospy.get_param("markers_queue_size")
-    lidar_frame = rospy.get_param("lidar_frame")
-
     # subscribers
-    pc_sub = rospy.Subscriber(pointcloud_topic, PointCloud2, pointcloud_handler)
+    pc_sub = rospy.Subscriber(pointcloud_topic, PointCloud2, pointcloud_callback)
 
     # publishers
     vis_pc_pub = rospy.Publisher(rviz_pointcloud_topic, PointCloud2, queue_size=rviz_pc_queue_size)

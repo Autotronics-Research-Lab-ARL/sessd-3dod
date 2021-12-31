@@ -1,7 +1,6 @@
 import itertools
 import logging
 from pathlib import Path
-
 from det3d.builder import build_box_coder
 from det3d.utils.config_tool import get_downsample_factor
 
@@ -15,7 +14,7 @@ box_coder = dict(type="ground_box3d_coder", n_dim=7, linear_dim=False, encode_an
 
 
 my_paras = dict(
-    batch_size=4,
+    batch_size=2,
     data_mode="train",        # "train" or "trainval": the set to train the model;
     enable_ssl=True,         # Ensure "False" in CIA-SSD training
     eval_training_set=False,  # True: eval on "data_mode" set; False: eval on validation set.[Ensure "False" in training; Switch in Testing]
@@ -137,7 +136,7 @@ test_pipeline = [
 
 
 data = dict(
-    samples_per_gpu=2, # my_paras['batch_size'],  # batch_size: 1
+    samples_per_gpu=my_paras['batch_size'],  # batch_size: 1
     workers_per_gpu=2,  # default: 2
     val=dict(
         type=dataset_type,
