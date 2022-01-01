@@ -45,26 +45,26 @@ $ roslaunch se_ssd detect_3d_objects.launch kitti:=true weights_path:=<abs-path>
 Reproduced the model results
 ```
 Evaluation official_AP_11: car AP(Average Precision)@0.70, 0.70, 0.70:
-bbox AP:99.04, 90.06, 89.47
-bev  AP:90.59, 88.80, 87.84
-3d   AP:90.05, 79.82, 78.80
-aos  AP:99.01, 89.81, 89.00
+bbox AP:98.72, 90.10, 89.57
+bev  AP:90.61, 88.76, 88.18
+3d   AP:90.21, 86.25, 79.22
+aos  AP:98.67, 89.86, 89.16
 car AP(Average Precision)@0.70, 0.50, 0.50:
-bbox AP:99.04, 90.06, 89.47
-bev  AP:99.09, 90.23, 89.76
-3d   AP:99.05, 90.18, 89.68
-aos  AP:99.01, 89.81, 89.00
+bbox AP:98.72, 90.10, 89.57
+bev  AP:98.76, 90.19, 89.77
+3d   AP:98.73, 90.16, 89.72
+aos  AP:98.67, 89.86, 89.16
 
 Evaluation official_AP_40: car AP(Average Precision)@0.70, 0.70, 0.70:
-bbox AP:99.63, 93.64, 90.99
-bev  AP:96.65, 90.26, 87.58
-3d   AP:93.56, 84.14, 81.21
-aos  AP:99.60, 93.34, 90.50
+bbox AP:99.57, 95.58, 93.16
+bev  AP:96.70, 92.15, 89.75
+3d   AP:93.75, 86.18, 83.51
+aos  AP:99.52, 95.28, 92.69
 car AP(Average Precision)@0.70, 0.50, 0.50:
-bbox AP:99.63, 93.64, 90.99
-bev  AP:99.67, 96.01, 93.44
-3d   AP:99.66, 95.94, 93.35
-aos  AP:99.60, 93.34, 90.50
+bbox AP:99.57, 95.58, 93.16
+bev  AP:99.60, 95.92, 93.42
+3d   AP:99.59, 95.86, 93.36
+aos  AP:99.52, 95.28, 92.69
 ```
 
 ### [supports]
