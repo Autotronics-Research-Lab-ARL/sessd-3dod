@@ -1,6 +1,12 @@
-# se_ssd
+# Self-Ensembling Single Shot Detector (SESSD)
 SE-SSD is a 3d-object-detection model: https://github.com/Vegeta2020/SE-SSD 
 
+<img width="100%" src="assets/sessd_sample.gif">
+<p align="center">
+    <i>Average inference time</i>: 65[ms] &asymp; 15[fps]
+    <i>, benchmark: TITAN GTX, RTX 3060Ti</i><br>
+    <i>detection-radius: </i> 50[m] 
+</p>
 
 ### Usage 
 ignore the repo src just pull the docker image and follow the usage guide
@@ -90,7 +96,8 @@ aos  AP:99.60, 93.34, 90.50
 - model inference given a directory of PointCloud binaries.
 - integrated with ROS
 - supports custom datasets
+- support 360 degree detection
 
 ### [to-do]
 - support multi-class prediction
-- support 360 degree detection
+
