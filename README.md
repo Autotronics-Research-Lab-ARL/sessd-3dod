@@ -61,6 +61,31 @@ $ python <script-name>
 ```
 <br>
 
+### [evaluation]
+Reproduced the model results
+
+Evaluation official_AP_11: car AP(Average Precision)@0.70, 0.70, 0.70:
+bbox AP:99.04, 90.06, 89.47
+bev  AP:90.59, 88.80, 87.84
+3d   AP:90.05, 79.82, 78.80
+aos  AP:99.01, 89.81, 89.00
+car AP(Average Precision)@0.70, 0.50, 0.50:
+bbox AP:99.04, 90.06, 89.47
+bev  AP:99.09, 90.23, 89.76
+3d   AP:99.05, 90.18, 89.68
+aos  AP:99.01, 89.81, 89.00
+
+Evaluation official_AP_40: car AP(Average Precision)@0.70, 0.70, 0.70:
+bbox AP:99.63, 93.64, 90.99
+bev  AP:96.65, 90.26, 87.58
+3d   AP:93.56, 84.14, 81.21
+aos  AP:99.60, 93.34, 90.50
+car AP(Average Precision)@0.70, 0.50, 0.50:
+bbox AP:99.63, 93.64, 90.99
+bev  AP:99.67, 96.01, 93.44
+3d   AP:99.66, 95.94, 93.35
+aos  AP:99.60, 93.34, 90.50
+
 ### [supports]
 - model inference given a directory of PointCloud binaries.
 - integrated with ROS
