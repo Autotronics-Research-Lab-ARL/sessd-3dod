@@ -67,12 +67,10 @@ bev  AP:99.60, 95.92, 93.42
 aos  AP:99.52, 95.28, 92.69
 ```
 
-### [supports]
-- model inference given a directory of PointCloud binaries.
-- integrated with ROS
-- supports custom datasets
-- support 360 degree detection
-
 ### [to-do]
-- support multi-class prediction
+- [ ] model inference given a directory of PointCloud binaries.
+- [ ] integrated with ROS
+- [ ] supports custom datasets
+- [ ] support 360 degree detection
+- [ ] support multi-class prediction
 
