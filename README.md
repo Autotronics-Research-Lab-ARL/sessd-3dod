@@ -1,4 +1,4 @@
-# Self-Ensembling Single Shot Detector (SESSD)
+# Self-Ensembling Single Shot Detector ([SESSD](https://openaccess.thecvf.com/content/CVPR2021/papers/Zheng_SE-SSD_Self-Ensembling_Single-Stage_Object_Detector_From_Point_Cloud_CVPR_2021_paper.pdf))
 SE-SSD is a 3d-object-detection model: https://github.com/Vegeta2020/SE-SSD 
 
 <img width="100%" src="assets/sessd_sample.gif">
