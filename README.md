@@ -68,9 +68,9 @@ aos  AP:99.52, 95.28, 92.69
 ```
 
 ### [to-do]
-- [ ] model inference given a directory of PointCloud binaries.
-- [ ] integrated with ROS
-- [ ] supports custom datasets
-- [ ] support 360 degree detection
+- [x] model inference given a directory of PointCloud binaries.
+- [x] integrate with ROS
+- [x] support custom datasets
+- [x] support 360 degree detection
 - [ ] support multi-class prediction
 
